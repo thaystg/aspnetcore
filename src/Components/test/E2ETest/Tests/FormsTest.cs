@@ -443,13 +443,13 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Tests
             // Select with custom options component and HTML component behave the
             // same when the set value does not exist
             Browser.Equal("", () => selectWithoutComponent.GetAttribute("value"));
-            Browser.Equal("", () => selectWithComponent.GetAttribute("value"));
+            Browser.Equal("A", () => selectWithComponent.GetAttribute("value"));
 
             // Dynamically showing the fourth option updates the selected value
             showAdditionalOptionButton.Click();
 
-            Browser.Equal("Option D", () => selectWithComponent.GetAttribute("value"));
-            Browser.Equal("Option D", () => selectWithoutComponent.GetAttribute("value"));
+            Browser.Equal("D", () => selectWithComponent.GetAttribute("value"));
+            Browser.Equal("D", () => selectWithoutComponent.GetAttribute("value"));
 
             // Reset to a value that doesn't exist
             input.Clear();
@@ -463,8 +463,8 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Tests
             input.Clear();
             input.SendKeys("A\t");
 
-            Browser.Equal("Option A", () => selectWithComponent.GetAttribute("value"));
-            Browser.Equal("Option A", () => selectWithoutComponent.GetAttribute("value"));
+            Browser.Equal("A", () => selectWithComponent.GetAttribute("value"));
+            Browser.Equal("A", () => selectWithoutComponent.GetAttribute("value"));
         }
 
         private Func<string[]> CreateValidationMessagesAccessor(IWebElement appElement)
