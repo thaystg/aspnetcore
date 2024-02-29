@@ -28,11 +28,11 @@ internal static class DebugProxyLauncher
         "Debug proxy for firefox now",
     };
 
-    public static Task<string> EnsureLaunchedAndGetUrl(IServiceProvider serviceProvider, string devToolsHost, bool isFirefox)
+    public static Task<string> EnsureLaunchedAndGetUrl(IServiceProvider serviceProvider, string devToolsHost, bool isFirefox, bool useVsdbg, string iCorDebugPort)
     {
         lock (LaunchLock)
         {
-            LaunchedDebugProxyUrl ??= LaunchAndGetUrl(serviceProvider, devToolsHost, isFirefox);
+            LaunchedDebugProxyUrl ??= LaunchAndGetUrl(serviceProvider, devToolsHost, isFirefox, useVsdbg, iCorDebugPort);
 
             return LaunchedDebugProxyUrl;
         }
@@ -53,7 +53,7 @@ internal static class DebugProxyLauncher
         return "";
     }
 
-    private static async Task<string> LaunchAndGetUrl(IServiceProvider serviceProvider, string devToolsHost, bool isFirefox)
+    private static async Task<string> LaunchAndGetUrl(IServiceProvider serviceProvider, string devToolsHost, bool isFirefox, bool useVSDbg, string iCorDebugPort)
     {
         var tcs = new TaskCompletionSource<string>();
 
@@ -62,10 +62,15 @@ internal static class DebugProxyLauncher
         var muxerPath = DotNetMuxer.MuxerPathOrDefault();
         var ownerPid = Environment.ProcessId;
         var ignoreProxyForLocalAddress = GetIgnoreProxyForLocalAddress();
+        var arguments = $"exec \"{executablePath}\" --OwnerPid {ownerPid} --DevToolsUrl {devToolsHost} --IsFirefoxDebugging {isFirefox} --FirefoxProxyPort 6001 {ignoreProxyForLocalAddress}";
+        if (useVSDbg)
+        {
+            arguments += $"--UseVSDbg {useVSDbg} --iCorDebugPort {iCorDebugPort}";
+        }
         var processStartInfo = new ProcessStartInfo
         {
             FileName = muxerPath,
-            Arguments = $"exec \"{executablePath}\" --OwnerPid {ownerPid} --DevToolsUrl {devToolsHost} --IsFirefoxDebugging {isFirefox} --FirefoxProxyPort 6001 {ignoreProxyForLocalAddress}",
+            Arguments = arguments,
             UseShellExecute = false,
             RedirectStandardOutput = true,
             RedirectStandardError = true,

@@ -32,11 +32,18 @@ public static class WebAssemblyNetDebugProxyAppBuilderExtensions
                     devToolsHost = $"http://{browserUrl.Host}:{browserUrl.Port}";
                 }
                 var isFirefox = string.IsNullOrEmpty(queryParams.Get("isFirefox")) ? false : true;
+                var useVsdbg = string.IsNullOrEmpty(queryParams.Get("usevsdbg")) ? false : true;
+                var iCorDebugPortParam = queryParams.Get("icordebugport");
+                var iCorDebugPort = useVsdbg ? "1234" : "";
+                if (useVsdbg && iCorDebugPortParam != null)
+                {
+                    iCorDebugPort = iCorDebugPortParam;
+                }
                 if (isFirefox)
                 {
                     devToolsHost = "localhost:6000";
                 }
-                var debugProxyBaseUrl = await DebugProxyLauncher.EnsureLaunchedAndGetUrl(context.RequestServices, devToolsHost, isFirefox);
+                var debugProxyBaseUrl = await DebugProxyLauncher.EnsureLaunchedAndGetUrl(context.RequestServices, devToolsHost, isFirefox, useVsdbg, iCorDebugPort);
                 var requestPath = context.Request.Path.ToString();
                 if (requestPath == string.Empty)
                 {
