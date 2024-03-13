@@ -324,6 +324,28 @@
       },
       "replaces": "44300"
     },
+    "debugPort": {
+      "type": "parameter",
+      "datatype": "integer",
+      "description": "Port number to used for managed wasm debugger."
+    },
+    "debugPortGenerated": {
+      "type": "generated",
+      "generator": "port",
+      "parameters": {
+        "low": 7400,
+        "high": 7900
+      }
+    },
+    "debugPortReplacer": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "debugPort",
+        "fallbackVariableName": "debugPortGenerated"
+      },
+      "replaces": "7400"
+    },
     "InteractivityPlatform": {
       "type": "parameter",
       "datatype": "choice",
